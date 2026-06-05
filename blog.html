@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog Saya</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #faf8f3;
+    --surface: #fff;
+    --text: #1a1714;
+    --muted: #6b6560;
+    --accent: #c0392b;
+    --accent-light: #f9eeec;
+    --border: #e8e4dc;
+    --ink: #2d2926;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--surface);
+    border-bottom: 2px solid var(--ink);
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+    cursor: pointer;
+  }
+  .logo span { color: var(--accent); }
+  nav { display: flex; gap: 8px; align-items: center; }
+  .nav-btn {
+    background: none;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: 20px;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { background: var(--bg); color: var(--ink); }
+  .nav-btn.active { background: var(--ink); color: #fff; }
+  .btn-post {
+    background: var(--accent);
+    color: #fff !important;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-post:hover { opacity: 0.85; }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* HERO */
+  .hero {
+    background: var(--ink);
+    color: #fff;
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero p {
+    color: #ccc;
+    font-size: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* MAIN CONTENT */
+  .main { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; }
+
+  /* SECTION TITLE */
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .section-head h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--ink);
+  }
+  .section-head::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* GRID */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.1); }
+  .card-thumb {
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: -2px;
+  }
+  .card-body { padding: 1.2rem; }
+  .card-cat {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--ink);
+    margin-bottom: 0.6rem;
+  }
+  .card-excerpt {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 0.8rem;
+  }
+  .card-author { font-weight: 500; color: var(--ink); }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .empty h3 { font-family: 'Playfair Display', serif; color: var(--ink); margin-bottom: 0.5rem; }
+
+  /* WRITE PAGE */
+  .write-wrap { max-width: 720px; margin: 0 auto; padding: 3rem 2rem; }
+  .write-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--ink);
+    margin-bottom: 2rem;
+  }
+  .form-group { margin-bottom: 1.5rem; }
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  input[type="text"], textarea, select {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: var(--ink);
+  }
+  textarea { min-height: 280px; resize: vertical; line-height: 1.7; }
+  .post-title-input {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  .emoji-picker {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+  .emoji-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .emoji-btn:hover, .emoji-btn.selected { border-color: var(--ink); background: var(--bg); }
+  .btn-submit {
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    padding: 0.85rem 2rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  .btn-submit:hover { opacity: 0.85; }
+  .char-count { font-size: 0.75rem; color: var(--muted); text-align: right; margin-top: 4px; }
+
+  /* ARTICLE PAGE */
+  .article-wrap { max-width: 720px; margin: 0 auto; padding: 3rem 2rem; }
+  .back-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    padding: 6px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-bottom: 2rem;
+    transition: all 0.2s;
+  }
+  .back-btn:hover { background: var(--bg); color: var(--ink); }
+  .article-hero {
+    height: 320px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 6rem;
+    font-family: 'Playfair Display', serif;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 2rem;
+    letter-spacing: -4px;
+  }
+  .article-cat {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+  }
+  .article-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+  }
+  .article-meta {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .article-body {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+  .article-actions {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 1rem;
+  }
+  .btn-delete {
+    background: none;
+    border: 1px solid #f0c0ba;
+    color: var(--accent);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    padding: 8px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-delete:hover { background: var(--accent-light); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* SEARCH */
+  .search-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    align-items: center;
+  }
+  .search-bar input {
+    flex: 1;
+    border-radius: 30px;
+    padding: 0.65rem 1.2rem;
+    font-size: 0.9rem;
+  }
+  .filter-select { width: auto; border-radius: 30px; padding: 0.65rem 1rem; }
+
+  @media (max-width: 600px) {
+    .header-inner { padding: 0 0.5rem; }
+    .hero { padding: 3rem 1.5rem 2.5rem; }
+    .posts-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo" onclick="showPage('home')">Blog<span>.</span></div>
+    <nav>
+      <button class="nav-btn active" id="nav-home" onclick="showPage('home')">Beranda</button>
+      <button class="nav-btn" id="nav-write" onclick="showPage('write')">Tulis</button>
+      <button class="btn-post" onclick="showPage('write')">+ Post Baru</button>
+    </nav>
+  </div>
+</header>
+
+<!-- HOME PAGE -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-tag">✍️ Blog Pribadi</div>
+    <h1>Cerita, Ide & Pemikiran</h1>
+    <p>Tempat berbagi tulisan, opini, dan inspirasi dari sudut pandang pribadi.</p>
+  </div>
+  <div class="main">
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Cari artikel..." oninput="renderPosts()">
+      <select class="filter-select" id="filter-cat" onchange="renderPosts()">
+        <option value="">Semua Kategori</option>
+        <option value="Teknologi">Teknologi</option>
+        <option value="Gaya Hidup">Gaya Hidup</option>
+        <option value="Perjalanan">Perjalanan</option>
+        <option value="Bisnis">Bisnis</option>
+        <option value="Kesehatan">Kesehatan</option>
+        <option value="Lainnya">Lainnya</option>
+      </select>
+    </div>
+    <div class="section-head"><h2>Semua Artikel</h2></div>
+    <div class="posts-grid" id="posts-grid"></div>
+  </div>
+</div>
+
+<!-- WRITE PAGE -->
+<div id="page-write" class="page">
+  <div class="write-wrap">
+    <h1 class="write-title">Tulis Artikel Baru</h1>
+    <div class="form-group">
+      <label>Judul Artikel</label>
+      <input type="text" class="post-title-input" id="input-title" placeholder="Masukkan judul yang menarik...">
+    </div>
+    <div class="form-group">
+      <label>Kategori</label>
+      <select id="input-cat">
+        <option value="Teknologi">Teknologi</option>
+        <option value="Gaya Hidup">Gaya Hidup</option>
+        <option value="Perjalanan">Perjalanan</option>
+        <option value="Bisnis">Bisnis</option>
+        <option value="Kesehatan">Kesehatan</option>
+        <option value="Lainnya">Lainnya</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Pilih Sampul (Emoji)</label>
+      <div class="emoji-picker" id="emoji-picker"></div>
+    </div>
+    <div class="form-group">
+      <label>Penulis</label>
+      <input type="text" id="input-author" placeholder="Nama kamu...">
+    </div>
+    <div class="form-group">
+      <label>Isi Artikel</label>
+      <textarea id="input-body" placeholder="Tulis artikel kamu di sini..." oninput="updateCharCount()"></textarea>
+      <div class="char-count" id="char-count">0 karakter</div>
+    </div>
+    <button class="btn-submit" onclick="submitPost()">Terbitkan Artikel →</button>
+  </div>
+</div>
+
+<!-- ARTICLE PAGE -->
+<div id="page-article" class="page">
+  <div class="article-wrap">
+    <button class="back-btn" onclick="showPage('home')">← Kembali</button>
+    <div class="article-hero" id="art-hero"></div>
+    <div class="article-cat" id="art-cat"></div>
+    <h1 class="article-title" id="art-title"></h1>
+    <div class="article-meta">
+      <span id="art-author"></span>
+      <span id="art-date"></span>
+      <span id="art-read"></span>
+    </div>
+    <div class="article-body" id="art-body"></div>
+    <div class="article-actions">
+      <button class="btn-delete" onclick="deletePost()">Hapus Artikel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const EMOJIS = ['📝','🌟','💡','🚀','🌍','🎯','📖','💻','🎨','🌱','🔥','💪','🎵','🍃','✨','🏔️','🌊','🧠'];
+const COLORS = [
+  'linear-gradient(135deg,#1a1714,#3d3530)',
+  'linear-gradient(135deg,#c0392b,#922b21)',
+  'linear-gradient(135deg,#1a5276,#154360)',
+  'linear-gradient(135deg,#1e8449,#145a32)',
+  'linear-gradient(135deg,#6c3483,#512e5f)',
+  'linear-gradient(135deg,#ca6f1e,#935116)',
+  'linear-gradient(135deg,#2471a3,#1a5276)',
+  'linear-gradient(135deg,#117a65,#0e6655)',
+];
+
+let posts = JSON.parse(localStorage.getItem('blog_posts') || '[]');
+let currentPostId = null;
+let selectedEmoji = '📝';
+
+function init() {
+  renderEmojiPicker();
+  renderPosts();
+  addSamplePosts();
+}
+
+function addSamplePosts() {
+  if (posts.length > 0) return;
+  const samples = [
+    { id: Date.now()+1, title: 'Selamat Datang di Blog Saya!', cat: 'Gaya Hidup', emoji: '✨', color: COLORS[0], author: 'Admin', date: new Date().toISOString(), body: 'Ini adalah posting pertama di blog ini. Saya sangat senang bisa berbagi tulisan, ide, dan pengalaman di sini.\n\nBlog ini dibuat untuk menuangkan pikiran dan berbagi cerita dengan siapa saja yang mampir membaca. Semoga tulisan-tulisan di sini bisa bermanfaat dan menginspirasi.\n\nJangan ragu untuk membaca dan memberikan dukungan ya! 😊' },
+    { id: Date.now()+2, title: 'Tips Produktif di Era Digital', cat: 'Teknologi', emoji: '💻', color: COLORS[2], author: 'Admin', date: new Date(Date.now()-86400000).toISOString(), body: 'Di era serba digital ini, menjaga produktivitas bisa menjadi tantangan tersendiri. Notifikasi terus berdatangan, media sosial menggoda, dan distraksi ada di mana-mana.\n\nBerikut beberapa tips yang bisa membantu:\n\n1. Tentukan jadwal fokus — blok waktu tertentu khusus untuk pekerjaan tanpa gangguan.\n2. Matikan notifikasi yang tidak penting.\n3. Gunakan teknik Pomodoro: 25 menit kerja, 5 menit istirahat.\n4. Pisahkan waktu untuk media sosial.\n\nCoba terapkan satu per satu dan rasakan perbedaannya!' },
+  ];
+  posts = samples;
+  savePosts();
+}
+
+function renderEmojiPicker() {
+  const picker = document.getElementById('emoji-picker');
+  picker.innerHTML = EMOJIS.map(e =>
+    `<button class="emoji-btn ${e===selectedEmoji?'selected':''}" onclick="selectEmoji('${e}')">${e}</button>`
+  ).join('');
+}
+
+function selectEmoji(e) {
+  selectedEmoji = e;
+  renderEmojiPicker();
+}
+
+function renderPosts() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  const cat = document.getElementById('filter-cat').value;
+  let filtered = posts.filter(p => {
+    const matchQ = !q || p.title.toLowerCase().includes(q) || p.body.toLowerCase().includes(q);
+    const matchC = !cat || p.cat === cat;
+    return matchQ && matchC;
+  });
+  const grid = document.getElementById('posts-grid');
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">📭</div><h3>Belum ada artikel</h3><p>Klik "+ Post Baru" untuk mulai menulis.</p></div>`;
+    return;
+  }
+  grid.innerHTML = filtered.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p => `
+    <div class="card" onclick="openPost(${p.id})">
+      <div class="card-thumb" style="background:${p.color}">${p.emoji}</div>
+      <div class="card-body">
+        <div class="card-cat">${p.cat}</div>
+        <div class="card-title">${p.title}</div>
+        <div class="card-excerpt">${p.body}</div>
+        <div class="card-meta">
+          <span class="card-author">✍️ ${p.author}</span>
+          <span>${formatDate(p.date)}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openPost(id) {
+  const p = posts.find(x=>x.id===id);
+  if(!p) return;
+  currentPostId = id;
+  document.getElementById('art-hero').style.background = p.color;
+  document.getElementById('art-hero').textContent = p.emoji;
+  document.getElementById('art-cat').textContent = p.cat;
+  document.getElementById('art-title').textContent = p.title;
+  document.getElementById('art-author').textContent = '✍️ ' + p.author;
+  document.getElementById('art-date').textContent = '📅 ' + formatDate(p.date);
+  const wc = p.body.split(/\s+/).length;
+  document.getElementById('art-read').textContent = '⏱️ ~' + Math.max(1,Math.ceil(wc/200)) + ' menit baca';
+  document.getElementById('art-body').textContent = p.body;
+  showPage('article');
+}
+
+function submitPost() {
+  const title = document.getElementById('input-title').value.trim();
+  const body = document.getElementById('input-body').value.trim();
+  const author = document.getElementById('input-author').value.trim() || 'Anonim';
+  const cat = document.getElementById('input-cat').value;
+  if(!title) { toast('⚠️ Judul tidak boleh kosong!'); return; }
+  if(!body) { toast('⚠️ Isi artikel tidak boleh kosong!'); return; }
+  const colorIdx = Math.floor(Math.random()*COLORS.length);
+  posts.push({ id: Date.now(), title, body, author, cat, emoji: selectedEmoji, color: COLORS[colorIdx], date: new Date().toISOString() });
+  savePosts();
+  document.getElementById('input-title').value = '';
+  document.getElementById('input-body').value = '';
+  document.getElementById('input-author').value = '';
+  document.getElementById('char-count').textContent = '0 karakter';
+  selectedEmoji = '📝';
+  renderEmojiPicker();
+  toast('🎉 Artikel berhasil diterbitkan!');
+  setTimeout(()=>showPage('home'),800);
+}
+
+function deletePost() {
+  if(!confirm('Hapus artikel ini?')) return;
+  posts = posts.filter(p=>p.id!==currentPostId);
+  savePosts();
+  toast('🗑️ Artikel dihapus');
+  showPage('home');
+}
+
+function savePosts() { localStorage.setItem('blog_posts', JSON.stringify(posts)); renderPosts(); }
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  const nb = document.getElementById('nav-'+name);
+  if(nb) nb.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+function formatDate(d) {
+  return new Date(d).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+}
+
+function updateCharCount() {
+  const v = document.getElementById('input-body').value;
+  document.getElementById('char-count').textContent = v.length.toLocaleString('id') + ' karakter';
+}
+
+init();
+</script>
+</body>
+</html>
